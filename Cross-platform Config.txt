@@ -12,6 +12,6 @@
   2.系统全局生效
     把以上文件拷贝到vim安装目录下：
     whereis vim
-    mv _vim  vim_install_dir/vimrc
+    mv _vimrc  vim_install_dir/vimrc
     mv vimfiles vim_install_dir/
 
