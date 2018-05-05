@@ -1,0 +1,17 @@
+一、跨平台需要的文件
+  vimfiles文件夹：包含各种插件、帮助文档等
+  _vimrc配置文件
+
+二、拷贝到linux系统
+  有两种方式，本用户生效和系统生效
+  1.本用户生效
+    把以上的文件拷贝到本用户home目录下：
+    mv _vimrc ~/.vimrc
+    mv vimfiles ~/.vimfiles
+
+  2.系统全局生效
+    把以上文件拷贝到vim安装目录下：
+    whereis vim
+    mv _vim  vim_install_dir/vimrc
+    mv vimfiles vim_install_dir/
+

@@ -1,0 +1,94 @@
+"已经被copymatch脚本替代
+"优点：集成在vimrc中，但对多行复制中，跳转不支持。且多行复制速度慢。
+
+""说明，支持使用参数：在寄存器c中放入index——pattern，可以传入搜索内部，以方便的生成目录
+""【note】占用寄存器x存放搜索的结果，占用寄存器y存放搜索结果在原文件中的行数，用于支持跳转
+"augroup vimrc
+"  autocmd VimLeavePre * :let @c=""
+"augroup END
+"nnoremap  <c-F5>  :call CopyMatchesSearchResult()<CR>
+"func! CopyMatchesSearchResult() 
+"  ":let @* = @x
+"  ":echo "March \" " . @/ . " \" had copied to clipboard"
+"  :silent CopyMatches
+"  :echo "March Block had copied to clipboard"
+"endfunction
+"nnoremap  <S-F5>  :call CopyLinesSearchResult()<CR>
+"func! CopyLinesSearchResult() 
+"  ":let @* = @x
+"  ":echo "March \" " . @/ . " \" had copied to clipboard"
+"  :CopyLines
+"  :echo "March Lines had copied to clipboard"
+"endfunction
+"nnoremap  <F5>  :call AdvanceSearch()<CR>
+"func! AdvanceSearch()
+"  if bufname("%")!="tags" " find the window where the buffer is opened
+"    let @x=""
+"    let @y=""
+"    if @c!=""
+"      let @/=@c
+"    endif
+"    :g//call setreg('X', matchstr(getline('.'), '.\+') . "\n")|call setreg('Y', matchstr(line('.'), '\d\+') . "\n")
+"  else
+"    :close 
+"    return
+"  endif
+"  if Mybuffer_find("tags") < 0 
+"    :silent vertical belowright 45split tags
+"    setlocal nonumber
+"    setlocal nowrap 
+"    "setlocal nohlsearch 
+"    "不扫描当前缓冲区的任何内容，不自动补全。
+"    setlocal complete=
+"    """Now map enter to Jump to line noly works on this buffer
+"    map <buffer> <cr> :call JumpLine()<cr>
+"    map <buffer> <RightMouse> :call JumpLine()<cr>
+"  endif
+"  setlocal modifiable
+"  exec ":normal ggVGd"
+"  if @c!=""
+"    echo "Search with pattern(@c):【 ".@c." 】,clear Reg [c] to Search anything else"
+"    let a:tipline="Index, Pattern:"
+"  else
+"    echo "Search with pattern(@/): 【".@/." 】"
+"    let a:tipline="Search For:"
+"  endif
+"  :silent put x
+"  exec ":normal ggi".a:tipline."【".@/."】"
+"  setlocal nomodifiable
+"  setlocal buftype="nofile"
+"  setlocal nomodified
+"endfunction
+"
+"func! Mybuffer_find(filename)
+"  let b = bufwinnr(a:filename) " find the window where the buffer is opened
+"  if b == -1 | return b | endif
+"  exe b.'wincmd w' 
+"  "jump to the window found
+"  return b
+"endfunction
+"
+"func! JumpLine()
+"  if bufname("%") != "tags" 
+"    echo "AdvanceSearch windows is not active,exit!"
+"    return
+"  endif
+"  let templine=line('.')-2
+"  if templine ==-1
+"    echo "Title raw!!"
+"    return
+"  endif
+"  let linenumbers=split(@y,"\n")
+"  let markline=0
+"  for i in range(0,len(linenumbers)) 
+"    if templine == i
+"      exe ":normal \<C-W>h"
+"      exe ":normal".get(linenumbers,i)."G"
+"      exe ":normal zz"
+"      exe ":normal \<C-W>l"
+"      set cursorline
+"      echo "Jump to :".get(linenumbers,i)
+"      break
+"    endif
+"  endfor
+"endfunction
